@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作機械の回転軸用 フランジシャフト 設計レポート</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+
+        :root {
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-accent-dim: rgba(14, 165, 233, 0.04);
+            --accent: #0284c7; /* 洗練されたスカイブルー */
+            --accent-gradient: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+            --text-main: #0f172a; /* 濃いスレートグレー（完全な黒より目に優しい） */
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --math-color: #0369a1; /* 数式用の深いブルー */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', 'Noto Sans JP', sans-serif;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 8%;
+            background: radial-gradient(circle at 80% 20%, rgba(79, 70, 229, 0.06) 0%, transparent 50%),
+                        radial-gradient(circle at 10% 80%, rgba(2, 132, 199, 0.05) 0%, transparent 40%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-tag {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(120deg, #0f172a 30%, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            border-top: 1px solid var(--border);
+            padding-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta span strong {
+            color: var(--text-main);
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        /* Container & Navigation Grid */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 6rem 4%;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+            letter-spacing: -0.02em;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        /* Philosophy Grid */
+        .grid-philosophy {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-num {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Technical Components Box */
+        .tech-section {
+            margin-bottom: 8rem;
+        }
+
+        .component-block {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .component-header h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .component-tag {
+            font-size: 0.85rem;
+            background: var(--bg-accent-dim);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            color: var(--accent);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .process-list {
+            list-style: none;
+        }
+
+        .process-list li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .process-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Flow & Task Section */
+        .assembly-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #f1f5f9 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 4rem;
+            margin-bottom: 8rem;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 900px) {
+            .assembly-box {
+                grid-template-columns: 1fr;
+                padding: 2.5rem;
+            }
+        }
+
+        .assembly-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-main);
+        }
+
+        /* Math & Specs Design */
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 600px) {
+            .math-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .math-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .math-card h4 {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .formula-block {
+            background: #ffffff;
+            padding: 1.2rem 2rem;
+            border-radius: 6px;
+            margin-top: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-family: "Cambria Math", "Cambria", "Times New Roman", Times, serif;
+            font-size: 1.3rem;
+            letter-spacing: 0.02em;
+            overflow-x: auto;
+            white-space: nowrap;
+            color: #000000; /* Wordの数式エディタは基本、完全な黒 */
+            border: 1px solid #d1d5db;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center; /* Wordのエディタのように中央揃えに */
+            align-items: center;
+        }
+        /* 数式内の変数（イタリック）と単位（立体）を区別するための補助クラス */
+        .formula-block var {
+            font-style: italic;
+            font-family: "Cambria Math", "Cambria", "Times New Roman", Times, serif;
+        }
+        .formula-block .unit {
+            font-style: normal;
+            font-size: 1.15rem;
+            color: #374151;
+            margin-left: 0.2rem;
+        }
+        .formula-block .comment {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.85rem;
+            color: #475569;
+            margin-left: auto; /* 右端に寄せる */
+        }
+        /* 分数を表現する簡易構造 */
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            padding: 0 0.3rem;
+        }
+        .numerator {
+            border-bottom: 1px solid #000;
+            padding-bottom: 0.1rem;
+            width: 100%;
+            text-align: center;
+        }
+        .denominator {
+            padding-top: 0.1rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        .formula-block span.comment {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            float: right;
+            margin-top: 0.3rem;
+        }
+
+        /* Table Design */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+
+        table {
+        caption {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.95rem;
+            color: var(--accent);
+            font-weight: 700;
+            background-color: #f1f5f9;
+            border-bottom: 1px solid var(--border);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 1rem;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        tr:hover td {
+            color: var(--text-main);
+            background-color: rgba(0, 229, 255, 0.02);
+        }
+
+        .highlight-row {
+            background-color: rgba(2, 132, 199, 0.08) !important;
+            border-left: 4px solid var(--accent);
+        }
+
+        .highlight-row td {
+            color: var(--accent) !important;
+            font-weight: 500;
+        }
+
+        /* Standard Reference Layout */
+        .reference-section {
+            border-top: 1px solid var(--border);
+            padding-top: 4rem;
+            margin-top: 6rem;
+        }
+
+        .reference-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .reference-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .reference-list li {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .reference-list li::before {
+            content: "▪";
+            position: absolute;
+            left: 0;
+            color: var(--border);
+        }
+
+        /* Technical Blueprint Wireframe / Graphics Substitute */
+        .blueprint-placeholder {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(rgba(2, 132, 199, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(2, 132, 199, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 1px dashed rgba(2, 132, 199, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(2, 132, 199, 0.6);
+            font-family: monospace;
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .sub-accent {
+            color: #7000ff;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-tag">Technical Report</div>
+        <h1>工作機械の回転軸用<br><span style="color: var(--accent);">フランジシャフト</span></h1>
+        <p class="hero-desc">
+            駆動モーターからの動力を仲介する中間軸用（加工には直接関係ない部分用）の設計・開発，強度計算検証，およびJIS規格に基づく選定基準を記録したものである．
+        </p>
+        
+    </section>
+
+    <div class="container">
+
+        <!-- SECTION 1: DESIGN PHILOSOPHY -->
+        <section style="margin-bottom: 8rem;">
+            <h2 class="section-title">設計理念</h2>
+            <div class="grid-philosophy">
+                <div class="card">
+                    <span class="card-num">01 / MINIMAL PARTS</span>
+                    <h3>部品点数をなるべく抑える</h3>
+                    <p>構造をシンプルに保ち，故障リスクおよび組立の複雑性を排除するための最適化アプローチ．</p>
+                </div>
+                <div class="card">
+                    <span class="card-num">02 / BALANCE</span>
+                    <h3>強度とコストが両立できる設計</h3>
+                    <p>過剰設計を避けつつ，実用回転に耐えうる最適なマテリアルと寸法のバランスを定義．</p>
+                </div>
+                <div class="card">
+                    <span class="card-num">03 / PRECISION</span>
+                    <h3>組立後，フランジとシャフトが直角になっている必要あり</h3>
+                    <p>軸ブレや振動を極小化するため，幾何学的な直角度の確保を絶対的な設計要件として設定．</p>
+                </div>
+                <div class="card">
+                    <span class="card-num">04 / OPTIMIZATION</span>
+                    <h3>丸材と棒材の「キー溝」を採用</h3>
+                    <p>一体削り出しだと材料の79%を捨てることになり，コスト高になるため，セパレート構造とキー溝による締結メカニズムを確立．</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: COMPONENTS & PROCESSES -->
+        <section class="tech-section">
+            <h2 class="section-title">部品仕様と加工プロセス</h2>
+            
+            <!-- フランジ -->
+            <div class="component-block">
+                <div class="component-header">
+                    <h3>部品図（フランジ）</h3>
+                    <span class="component-tag">FLANGE SPECIFICATION</span>
+                </div>
+                <div style="width: 100%; text-align: center; margin-bottom: 2rem;">
+                    <img src="フランジ1.png" alt="フランジの写真" 
+                    onclick="openModal(this.src)"
+                    style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s ease;">
+                </div>
+                <h4 style="margin-bottom:1rem; font-weight:600;">【フランジの加工】</h4>
+                <ul class="process-list">
+                    <li>フランジの段差部分はエンドミルで加工する．</li>
+                    <li>フランジの穴加工 → 初めにエンドミルで加工し，リーマー加工で表面仕上げを行う．</li>
+                    <li>フィレット部分 → ワイヤ放電加工</li>
+                </ul>
+            </div>
+
+            <!-- シャフト -->
+            <div class="component-block">
+                <div class="component-header">
+                    <h3>部品図（シャフト）</h3>
+                    <span class="component-tag">SHAFT SPECIFICATION</span>
+                </div>
+                <div style="width: 100%; text-align: center; margin-bottom: 2rem;">
+                    <img src="シャフト1.png" alt="シャフトの写真" 
+                    onclick="openModal(this.src)"
+                    style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s ease;">
+                </div>
+                <h4 style="margin-bottom:1rem; font-weight:600;">【シャフトの加工】</h4>
+                <ul class="process-list">
+                    <li>丸棒を切削し，シャフトを掘り出す．</li>
+                    <li>キー溝 → 小型エンドミルを用いた，ミーリング加工</li>
+                </ul>
+            </div>
+
+            <!-- キー -->
+            <div class="component-block">
+                <div class="component-header">
+                    <h3>部品図（キー）</h3>
+                    <span class="component-tag">KEY SPECIFICATION</span>
+                </div>
+                <div style="width: 100%; text-align: center; margin-bottom: 2rem;">
+                    <img src="キー1.png" alt="キーの写真" 
+                    onclick="openModal(this.src)"
+                    style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s ease;">
+                </div>
+                <h4 style="margin-bottom:1rem; font-weight:600;">【キーの加工】</h4>
+                <ul class="process-list">
+                    <li>角材の切削及びワイヤ放電加工</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 3: FLOW & TASKS -->
+        <section>
+            <div class="assembly-box">
+                <div>
+                    <h3 class="assembly-title">組立の流れ</h3>
+                    <ul class="process-list">
+                        <li>丸材（フランジ）へ（シャフト）を挿入 ＋ キーで固定</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="assembly-title">【課題と解決策】</h3>
+                    <ul class="process-list" style="font-size: 0.95rem;">
+                        <li><strong>フランジにキー溝を設置し，必要なトルクに耐えられるようにする</strong><br>→ 応力が集中しやすいキー溝の形をどうするか？ → フィレットをつける</li>
+                        <li><strong>材料の強度確保</strong><br>→ 調質（焼き入れ・焼き戻し）を行い，強度と靭性を向上させる．</li>
+                        <li><strong>強度計算による信頼性の担保</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ROTATION MECHANISM -->
+        <section style="margin-bottom: 8rem;">
+            <h2 class="section-title">フランジシャフトの回転メカニズム</h2>
+            <div class="grid-philosophy" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                <div class="card" style="padding: 1.5rem;">
+                    <span class="card-num">STEP 01</span>
+                    <p style="color: var(--text-main); font-weight: 500;">① フランジが回る</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <span class="card-num">STEP 02</span>
+                    <p style="color: var(--text-main); font-weight: 500;">② キーの上側 (4mm) が押される</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <span class="card-num">STEP 03</span>
+                    <p style="color: var(--text-main); font-weight: 500;">③ キー全体が回ろうとする</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <span class="card-num">STEP 04</span>
+                    <p style="color: var(--text-main); font-weight: 500;">④ キーの下側 (6mm) がシャフトを押す</p>
+                </div>
+                <div class="card" style="padding: 1.5rem;">
+                    <span class="card-num">STEP 05</span>
+                    <p style="color: var(--text-main); font-weight: 500;">⑤ シャフトも一緒に回る</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: JIS STANDARDS SELECTION -->
+        <section style="margin-bottom: 8rem;">
+            <h2 class="section-title">規格に基づくキー溝・キー・ボルトの選定</h2>
+            
+            <h3 style="font-size:1.4rem; margin-bottom:1rem;">● キー溝・キーの選定</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                JIS B 1301-1996 より，平行キー溝を <strong>b = 16, h = 10, r₂ = 0.4</strong> と決定（長さ L = 60mm）．
+            </p>
+
+            <div class="table-container">
+                <caption style="text-align:left; padding:1rem; font-size:0.9rem; color:var(--accent); font-weight:bold;">平行キー用のキー溝の形状及び寸法 (単位: mm)</caption>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>キーの呼び寸法 b × h</th>
+                            <th>b₁ 及び b₂ の基準寸法</th>
+                            <th>滑動形 b₁ 許容差(H9)</th>
+                            <th>滑動形 b₂ 許容差(D10)</th>
+                            <th>普通形 b₁ 許容差(N9)</th>
+                            <th>普通形 b₂ 許容差(Js9)</th>
+                            <th>締込み形 b₁及びb₂ 許容差(P9)</th>
+                            <th>r₁ 及び r₂</th>
+                            <th>t₁ の基準寸法</th>
+                            <th>t₂ の基準寸法</th>
+                            <th>t₁及びt₂ の許容差</th>
+                            <th>参考 適応する軸径 d</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>2 × 2</td><td>2</td><td>+0.025 / 0</td><td>+0.060 / +0.020</td><td>0 / -0.004</td><td>±0.0125</td><td>-0.006 / -0.031</td><td>0.08 ~ 0.16</td><td>1.2</td><td>1.0</td><td>+0.1 / 0</td><td>6 ~ 8</td></tr>
+                        <tr><td>3 × 3</td><td>3</td><td>+0.025 / 0</td><td>+0.060 / +0.020</td><td>0 / -0.029</td><td>±0.0125</td><td>-0.006 / -0.031</td><td>0.08 ~ 0.16</td><td>1.8</td><td>1.4</td><td>+0.1 / 0</td><td>8 ~ 10</td></tr>
+                        <tr><td>4 × 4</td><td>4</td><td>+0.030 / 0</td><td>+0.078 / +0.030</td><td>0 / -0.030</td><td>±0.0150</td><td>-0.012 / -0.042</td><td>0.16 ~ 0.25</td><td>2.5</td><td>1.8</td><td>+0.1 / 0</td><td>10 ~ 12</td></tr>
+                        <tr><td>5 × 5</td><td>5</td><td>+0.030 / 0</td><td>+0.078 / +0.030</td><td>0 / -0.030</td><td>±0.0150</td><td>-0.012 / -0.042</td><td>0.16 ~ 0.25</td><td>3.0</td><td>2.3</td><td>+0.1 / 0</td><td>12 ~ 17</td></tr>
+                        <tr><td>6 × 6</td><td>6</td><td>+0.030 / 0</td><td>+0.078 / +0.030</td><td>0 / -0.030</td><td>±0.0150</td><td>-0.012 / -0.042</td><td>0.16 ~ 0.25</td><td>3.5</td><td>2.8</td><td>+0.1 / 0</td><td>17 ~ 22</td></tr>
+                        <tr><td>(7 × 7)</td><td>7</td><td>+0.036 / 0</td><td>+0.098 / +0.040</td><td>0 / -0.036</td><td>±0.0180</td><td>-0.015 / -0.051</td><td>0.16 ~ 0.25</td><td>4.0</td><td>3.3</td><td>+0.2 / 0</td><td>20 ~ 25</td></tr>
+                        <tr><td>8 × 7</td><td>8</td><td>+0.036 / 0</td><td>+0.098 / +0.040</td><td>0 / -0.036</td><td>±0.0180</td><td>-0.015 / -0.051</td><td>0.16 ~ 0.25</td><td>4.0</td><td>3.3</td><td>+0.2 / 0</td><td>22 ~ 30</td></tr>
+                        <tr><td>10 × 8</td><td>10</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>0.25 ~ 0.40</td><td>5.0</td><td>3.3</td><td>+0.2 / 0</td><td>30 ~ 38</td></tr>
+                        <tr><td>12 × 8</td><td>12</td><td>+0.043</td><td>+0.120</td><td>0</td><td>±0.0215</td><td>-0.018</td><td>0.25 ~ 0.40</td><td>5.0</td><td>3.3</td><td>+0.2 / 0</td><td>38 ~ 44</td></tr>
+                        <tr><td>14 × 9</td><td>14</td><td>0</td><td>+0.050</td><td>-0.043</td><td>-0.061</td><td>-</td><td>0.25 ~ 0.40</td><td>5.5</td><td>3.8</td><td>+0.2 / 0</td><td>44 ~ 50</td></tr>
+                        <tr><td>(15 × 10)</td><td>15</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>0.25 ~ 0.40</td><td>5.0</td><td>5.3</td><td>+0.2 / 0</td><td>50 ~ 55</td></tr>
+                        <tr class="highlight-row">
+                            <td>16 × 10 [選定]</td>
+                            <td>16</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>0.25 ~ 0.40 (r₂=0.4)</td>
+                            <td>6.0 (t₁)</td>
+                            <td>4.3 (t₂)</td>
+                            <td>+0.2 / 0</td>
+                            <td>50 ~ 58 [軸径50mm適合]</td>
+                        </tr>
+                        <tr><td>18 × 11</td><td>18</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>7.0</td><td>4.4</td><td>-</td><td>58 ~ 65</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size:1.4rem; margin-top:4rem; margin-bottom:1rem;">● ボルト穴・個数の選定</h3>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                JIS B 1451-1991 より，以下の寸法とする．<br>
+                <strong>8-Φ14 / M12のボルト</strong> ※ロックナットを採用する．<br>
+                備考: ボルト穴の配置は，キー溝に対しておおむね振分けとする．
+            </p>
+
+            <div class="table-container">
+                <caption style="text-align:left; padding:1rem; font-size:0.9rem; color:var(--accent); font-weight:bold;">フランジ形固定軸継手 (単位: mm)</caption>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>継手外径 A</th>
+                            <th>D 最大(参考) 軸穴直径</th>
+                            <th>(参考) 最小軸穴直径</th>
+                            <th>L</th>
+                            <th>C</th>
+                            <th>B</th>
+                            <th>F</th>
+                            <th>n (個)</th>
+                            <th>a</th>
+                            <th>はめ込み部 E</th>
+                            <th>はめ込み部 S₂</th>
+                            <th>はめ込み部 S₁</th>
+                            <th>参考 RC (約)</th>
+                            <th>参考 RA (約)</th>
+                            <th>参考 C_g (約)</th>
+                            <th>ボルト抜きしろ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>112</td><td>28</td><td>16</td><td>40</td><td>50</td><td>75</td><td>16</td><td>4</td><td>10</td><td>40</td><td>2</td><td>3</td><td>2</td><td>1</td><td>1</td><td>70</td></tr>
+                        <tr><td>125</td><td>32</td><td>18</td><td>45</td><td>56</td><td>85</td><td>18</td><td>4</td><td>14</td><td>45</td><td>2</td><td>3</td><td>2</td><td>1</td><td>1</td><td>81</td></tr>
+                        <tr><td>140</td><td>38</td><td>20</td><td>50</td><td>71</td><td>100</td><td>18</td><td>6</td><td>14</td><td>56</td><td>2</td><td>3</td><td>2</td><td>1</td><td>1</td><td>81</td></tr>
+                        <tr><td>160</td><td>45</td><td>25</td><td>56</td><td>80</td><td>115</td><td>18</td><td>8</td><td>14</td><td>71</td><td>2</td><td>3</td><td>3</td><td>1</td><td>1</td><td>81</td></tr>
+                        <tr class="highlight-row">
+                            <td>180 [選定]</td>
+                            <td>50</td>
+                            <td>28</td>
+                            <td>63</td>
+                            <td>90</td>
+                            <td>132</td>
+                            <td>18</td>
+                            <td>8</td>
+                            <td>14</td>
+                            <td>80</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>81</td>
+                        </tr>
+                        <tr><td>200</td><td>56</td><td>32</td><td>71</td><td>100</td><td>145</td><td>22.4</td><td>8</td><td>16</td><td>90</td><td>3</td><td>4</td><td>3</td><td>2</td><td>1</td><td>103</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 6: DESIGN OSTRACISM & CRITERIA -->
+        <section style="margin-bottom: 8rem;">
+            <h2 class="section-title">様々な応力と強度計算の基礎定義</h2>
+            <div style="background-color: var(--bg-card); border: 1px solid var(--border); padding: 3rem; border-radius: 16px;">
+                <ul class="process-list" style="margin-bottom: 2rem;">
+                    <li><strong>設計応力 &sigma;<sub>d</sub></strong> ：設計者が「このぐらいの値に収めようとする目標値」</li>
+                    <li><strong>許容応力 &sigma;<sub>al</sub> (= &sigma;<sub>F</sub> / S)</strong> ：設計者が定める，実用上の限界</li>
+                    <li><strong>基準強さ &sigma;<sub>F</sub></strong> ：部材の限界値（静的：引っ張り強さ等，動的：疲れ限度）</li>
+                    <li><strong>作用応力</strong> ：実際に部材に作用する応力（理想的には，設計応力と等しい）</li>
+                </ul>
+                <h4 style="font-size:1.2rem; color: var(--text-main); margin-bottom: 1rem;">【強度計算について】</h4>
+                <div class="formula-block" style="width: fit-content; padding: 1rem 2rem;">
+                    <var>&sigma;<sub>d</sub></var>  &le;  <var>&sigma;<sub>al</sub></var> (= <div class="fraction"><div class="numerator"><var>&sigma;<sub>F</sub></var></div><div class="denominator"><var>S</var></div></div>)
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">
+                    フランジシャフトは実際には回転するため，動的な強度計算を行い，信頼性を証明する必要がある．これ以降の強度計算では，以下を算出・検証する：
+                </p>
+                <ol style="margin-left: 2rem; margin-top: 1rem; color: var(--text-muted); line-height: 2;">
+                    <li>キーにかかるせん断応力（設計応力） &tau;</li>
+                    <li>フランジ側のキー溝にかかる面圧（設計応力） &sigma;₁ [Pa]</li>
+                    <li>シャフト側のキー溝にかかる面圧（設計応力） &sigma;₂ [Pa]</li>
+                    <li>シャフトのせん断応力 &tau;<sub>s</sub> [Pa] &rarr; <span style="color: var(--accent);">† 切り欠きありのため，許容応力に注意．</span></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- SECTION 7: DETAILED STRENGTH CALCULATIONS -->
+        <section style="margin-bottom: 8rem;">
+            <h2 class="section-title">動的許容応力の算出および前提条件</h2>
+            
+            <div class="math-grid">
+                <!-- 強度計算1~3用 -->
+                <div class="math-card">
+                    <h4>＜強度計算①～③用＞ 動的な許容応力 &sigma;<sub>al</sub> の算出</h4>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">切り欠きなしとして算出</p>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>al</sub></var> = <div class="fraction"><div class="numerator">基準強さ</div><div class="denominator">安全率</div></div> = <div class="fraction"><div class="numerator"><var>&sigma;<sub>F</sub></var></div><div class="denominator"><var>S</var></div></div>
+                    </div>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>F</sub></var> = <var>&sigma;<sub>wk</sub></var> = 264.6<span class="unit">[MPa]</span> <span class="comment">※基準強さ = 疲れ限度</span>
+                    </div>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>al1</sub></var> = <div class="fraction"><div class="numerator"><var>&sigma;<sub>F</sub></var></div><div class="denominator"><var>S</var></div></div> = <div class="fraction"><div class="numerator">264.6</div><div class="denominator">5</div></div> = 52.92<span class="unit">[MPa]</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:1rem;">
+                        • 回転曲げの疲れ限度 &sigma;<sub>w0</sub> に関して（S-N曲線参照）: S45C（調質材）の回転曲げ時の疲れ限度 &sigma;<sub>w0</sub> = 264.6 [MPa]<br>
+                        • 安全率 S に関して（アンヴィンの安全率参照）: 鋼の片振りの繰り返し荷重より， S = 5
+                    </p>
+                </div>
+
+                <!-- 強度計算4用 -->
+                <div class="math-card">
+                    <h4>＜強度計算④用＞ 動的な許容応力 &sigma;<sub>al</sub> の算出 ①</h4>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">切り欠きあり（キー溝考慮）として算出</p>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>al</sub></var> = <div class="fraction"><div class="numerator">基準強さ</div><div class="denominator">安全率</div></div> = <div class="fraction"><div class="numerator"><var>&sigma;<sub>F</sub></var></div><div class="denominator"><var>S</var></div></div>
+                    </div>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>F</sub></var> = <var>&sigma;<sub>wk</sub></var> = <div class="fraction"><div class="numerator"><var>&sigma;<sub>w0</sub></var></div><div class="denominator"><var>&beta;</var></div></div> = <div class="fraction"><div class="numerator">264.6</div><div class="denominator">3.5</div></div> = 75.6<span class="unit">[MPa]</span>
+                    </div>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>al2</sub></var> = <div class="fraction"><div class="numerator"><var>&sigma;<sub>F</sub></var></div><div class="denominator"><var>S</var></div></div> = <div class="fraction"><div class="numerator">75.6</div><div class="denominator">5</div></div> = 15.12<span class="unit">[MPa]</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-top:1rem;">
+                        • 回転曲げの疲れ限度 &sigma;<sub>w0</sub> = 264.6 [MPa]<br>
+                        • 安全率 S = 5 （鋼の片振りの繰り返し荷重より）
+                    </p>
+                </div>
+            </div>
+
+            <!-- 切り欠き係数詳細 -->
+            <div class="component-block" style="margin-top: 2.5rem; background: #f8fafc;">
+                <h4 style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.5rem; text-transform: uppercase;">＜強度計算④用＞ 動的な許容応力 &sigma;<sub>al</sub> の算出 ②（切り欠き係数詳細）</h4>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    • 切り欠き係数 &beta; に関して 【キー溝等の寸法】
+                </p>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size:0.9rem; color: var(--text-main); margin-bottom: 2rem;">
+                    <div>・ 軸径：D = 50 [mm]</div>
+                    <div>・ キー幅：b = 16 [mm]</div>
+                    <div>・ キー高さ：h = 10 [mm] <br><span style="color:var(--text-muted); font-size:0.8rem;">(シャフト側のキー溝深さ：t₂ = 6 [mm])</span></div>
+                    <div>・ キー溝長さ：L = 60 [mm]</div>
+                    <div>・ キー溝底隅角部の曲率半径：r = 0.4 [mm]</div>
+                </div>
+                <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 2;">
+                        ・ 幅比： b / D = 16 / 50 = 0.32<br>
+                        ・ 深さ比： t₂ / D = 6 / 50 = 0.12<br>
+                        ・ フィレット比： r / D = 0.4 / 50 = 0.008<br>
+                        <strong>結論：</strong> 規格表（キーみぞを有する軸の応力集中規格）において該当箇所を見ると，切り欠き係数 &beta; は <strong>&beta; = 3.3 〜 3.8</strong> となっており，今回は安全側を考慮して <strong>&beta; = 3.5</strong> とした．
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: MATHEMATICAL EQUATIONS PROCESS -->
+        <section style="margin-bottom: 8rem;">
+            <h2 class="section-title">強度検証計算のプロセスと全途中式</h2>
+            
+            <div class="component-block" style="background: var(--bg-card); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+                <p style="margin-bottom: 2rem; color: var(--text-muted);">
+                    <strong>【設計諸元設定】</strong><br>
+                    工作機械のモーター出力 11kW, 最低回転数 500rpm, 軸径 50mm, キーの幅 b = 16mm, 高さ h = 10mm, 長さ L = 60mm として計算する．
+                </p>
+
+                <!-- 作用トルク -->
+                <div style="margin-bottom: 3rem;">
+                    <h3 style="font-size:1.2rem; color:var(--accent); margin-bottom:1rem;">■ 作用トルク T の算出</h3>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">出力 P [W], トルク T [N·m], 角速度 &omega; [rad/s] とすると，</p>
+                    <div class="formula-block"><var>P</var><span class="unit">[W]</span> = <var>T</var><span class="unit">[N&middot;m]</span> &middot; <var>&omega;</var><span class="unit">[rad/s]</span></div>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">回転数を N [rpm] とすると， &omega; [rad/s] = 2&pi;N / 60 となり，</p>
+                    <div class="formula-block">
+                        <var>T</var><span class="unit">[N&middot;m]</span> = <div class="fraction"><div class="numerator">60<var>P</var></div><div class="denominator">2&pi;<var>N</var></div></div> = <div class="fraction"><div class="numerator">60 &middot; 11 &times; 10<sup>3</sup></div><div class="denominator">2&pi; &middot; 500</div></div> = 210.08<span class="unit">[N&middot;m]</span> <span class="comment">(モータが一定速度で回転する場合)</span>
+                    </div>
+                </div>
+
+                <!-- 作用荷重 -->
+                <div style="margin-bottom: 3rem;">
+                    <h3 style="font-size:1.2rem; color:var(--accent); margin-bottom:1rem;">■ 実際にキーにかかる力（作用荷重） F [N]</h3>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">軸の半径（ d / 2 = 25 [mm] ）の位置に作用するものと考えると，</p>
+                    <div class="formula-block">
+                        <var>F</var><span class="unit">[N]</span> = <div class="fraction"><div class="numerator"><var>T</var></div><div class="denominator"><div class="fraction"><div class="numerator"><var>d</var></div><div class="denominator">2</div></div></div></div> = <div class="fraction"><div class="numerator">210.08</div><div class="denominator">25 &times; 10<sup>-3</sup></div></div> = 8403.2<span class="unit">[N]</span>
+                    </div>
+                </div>
+
+                <!-- ① キーにかかるせん断応力 -->
+                <div style="margin-bottom: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                    <h3 style="font-size:1.2rem; color:var(--accent); margin-bottom:1rem;">■ ① キーにかかるせん断応力（設計応力）</h3>
+                    <div style="width: 100%; text-align: center; margin-bottom: 2rem;">
+                        <img src="強度計算1.png" alt="強度計算1の写真" 
+                        onclick="openModal(this.src)"
+                        style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s ease;">
+                    </div>
+                    <div class="formula-block">
+                        <var>&tau;</var> = <div class="fraction"><div class="numerator"><var>F</var></div><div class="denominator"><var>b</var> &middot; <var>L</var></div></div> = <div class="fraction"><div class="numerator">8403.2</div><div class="denominator">16 &times; 10<sup>-3</sup> &middot; 60 &times; 10<sup>-3</sup></div></div> = 8.75<span class="unit">[MPa]</span>
+                    </div>
+                    <p style="color:var(--math-color); font-size:0.9rem;">
+                        判定：S45Cの動的な許容応力（切り欠きなし）は， &sigma;<sub>al1</sub> = 52.92 [MPa] である．<br>
+                        よって， <strong>&tau; &lt; &sigma;<sub>al1</sub></strong> となり，設計基準を満たす．
+                    </p>
+                </div>
+
+                <!-- ② フランジ側のキー溝にかかる面圧 -->
+                <div style="margin-bottom: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                    <h3 style="font-size:1.2rem; color:var(--accent); margin-bottom:1rem;">■ ② フランジ側のキー溝にかかる面圧（設計応力，フランジ側のキー溝 t₁ = 4 [mm]）</h3>
+                    <div style="width: 100%; text-align: center; margin-bottom: 2rem;">
+                        <img src="強度計算2.png" alt="強度計算2の写真" 
+                        onclick="openModal(this.src)"
+                        style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s ease;">
+                    </div>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>1</sub></var> = <div class="fraction"><div class="numerator"><var>F</var></div><div class="denominator"><var>t<sub>1</sub></var> &middot; <var>L</var></div></div> = <div class="fraction"><div class="numerator">8403.2</div><div class="denominator">4 &times; 10<sup>-3</sup> &middot; 60 &times; 10<sup>-3</sup></div></div> = 35.01<span class="unit">[MPa]</span>
+                    </div>
+                    <p style="color:var(--math-color); font-size:0.9rem;">
+                        判定：S45Cの動的な許容応力（切り欠きなし）は， &sigma;<sub>al1</sub> = 52.92 [MPa] である．<br>
+                        よって， <strong>&sigma;₁ &lt; &sigma;<sub>al1</sub></strong> となり，設計基準を満たす．
+                    </p>
+                </div>
+
+                <!-- ③ シャフト側のキー溝にかかる設計応力（面圧） -->
+                <div style="margin-bottom: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                    <h3 style="font-size:1.2rem; color:var(--accent); margin-bottom:1rem;">■ ③ シャフト側のキー溝にかかる面圧（設計応力，シャフト側のキー溝 t₂ = 6 [mm]）</h3>
+                    <div style="width: 100%; text-align: center; margin-bottom: 2rem;">
+                        <img src="強度計算3.png" alt="強度計算3の写真" 
+                        onclick="openModal(this.src)"
+                        style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border); cursor: zoom-in; transition: transform 0.2s ease;">
+                    </div>
+                    <div class="formula-block">
+                        <var>&sigma;<sub>2</sub></var> = <div class="fraction"><div class="numerator"><var>F</var></div><div class="denominator"><var>t<sub>2</sub></var> &middot; <var>L</var></div></div> = <div class="fraction"><div class="numerator">8403.2</div><div class="denominator">6 &times; 10<sup>-3</sup> &middot; 60 &times; 10<sup>-3</sup></div></div> = 23.34<span class="unit">[MPa]</span>
+                    </div>
+                    <p style="color:var(--math-color); font-size:0.9rem;">
+                        判定：S45Cの動的な許容応力（切り欠きなし）は， &sigma;<sub>al1</sub> = 52.92 [MPa] である．<br>
+                        よって， <strong>&sigma;₂ &lt; &sigma;<sub>al1</sub></strong> となり，設計基準を満たす．
+                    </p>
+                </div>
+
+                <!-- ④ シャフトのせん断応力 -->
+                <div style="margin-bottom: 1rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                    <h3 style="font-size:1.2rem; color:var(--accent); margin-bottom:1rem;">■ ④ シャフトのせん断応力（シャフト部分にはねじりの力が加わる）</h3>
+                    <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">シャフトの極断面係数： Z<sub>p</sub></p>
+                    <div class="formula-block">
+                        <var>Z<sub>p</sub></var> = <div class="fraction"><div class="numerator">&pi; &middot; <var>d</var><sup>3</sup></div><div class="denominator">16</div></div> = <div class="fraction"><div class="numerator">&pi; &middot; (50 &times; 10<sup>-3</sup>)<sup>3</sup></div><div class="denominator">16</div></div> = 2.454 &times; 10<sup>-5</sup> <span class="unit">[m<sup>3</sup>]</span>
+                    </div>
+                    <div class="formula-block">
+                        <var>&tau;<sub>s</sub></var> = <div class="fraction"><div class="numerator"><var>T</var></div><div class="denominator"><var>Z<sub>p</sub></var></div></div> = <div class="fraction"><div class="numerator">210.08</div><div class="denominator">2.454 &times; 10<sup>-5</sup></div></div> = 8.56<span class="unit">[MPa]</span>
+                    </div>
+                    <p style="color:var(--math-color); font-size:0.9rem;">
+                        判定：S45Cの動的な許容応力（切り欠きあり）は， &sigma;<sub>al2</sub> = 15.12 [MPa] である．<br>
+                        よって， <strong>&tau;<sub>s</sub> &lt; &sigma;<sub>al2</sub></strong> となり，設計基準を満たす．
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: CONCLUSION -->
+        <section style="margin-bottom: 6rem;">
+            <div style="border: 1px solid var(--accent); background: var(--bg-accent-dim); padding: 3rem; border-radius: 16px; text-align: center;">
+                <h2 style="font-size: 2rem; color: var(--text-main); margin-bottom: 1rem;">完成図の検証結果</h2>
+                <p style="max-width: 800px; margin: 0 auto; color: var(--text-muted);">
+                    全ての設計応力（キーのせん断応力，フランジ側・シャフト側のキー溝面圧，およびキー溝切り欠きを考慮したシャフト自体のねじりせん断応力）は，調質材S45Cの動的許容応力の限界値を下回っており，本フランジシャフト設計の構造的な安全強度基準および信頼性が証明された．
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 10: BLUEPRINT & GALLERY -->
+        <section style="margin-bottom: 6rem;">
+            <h2 class="section-title">完成図面・写真</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                設計・強度計算に基づき，最終的にアセンブリされたフランジシャフトの完成図である．各画像をクリックすると拡大可能．
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <!-- 完成図1: 全体アセンブリ -->
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <span class="card-num">FIGURE 01 / ASSEMBLY</span>
+                    <div style="margin: 1rem 0; cursor: zoom-in;">
+                        <img src="完成図1.png" alt="フランジシャフト完成図（全体アセンブリ）" 
+                             onclick="openModal(this.src)"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                             style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); transition: transform 0.2s ease;">
+                        <div class="blueprint-placeholder" style="height: 180px; margin-bottom: 0; display: none;">
+                            [ IMAGE: COMPLETE ASSEMBLY ]
+                        </div>
+                    </div>
+                    <h4 style="font-size: 1rem; color: var(--text-main); margin-top: 0.5rem;">全体アセンブリ図</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">フランジ，シャフト，キー，ボルトが一体となった完成状態</p>
+                </div>
+
+                <!-- 完成図2: ボルト等寸法 -->
+                <div class="card" style="padding: 1.5rem; text-align: center;">
+                    <span class="card-num">FIGURE 02 / SIZE</span>
+                    <div style="margin: 1rem 0; cursor: zoom-in;">
+                        <img src="ボルト等寸法.png" alt="ボルト等寸法" 
+                             onclick="openModal(this.src)"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                             style="max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); transition: transform 0.2s ease;">
+                        <div class="blueprint-placeholder" style="height: 180px; margin-bottom: 0; display: none;">
+                            [ IMAGE: CROSS SECTION ]
+                        </div>
+                    </div>
+                    <h4 style="font-size: 1rem; color: var(--text-main); margin-top: 0.5rem;">ボルト等寸法図</h4>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">ボルトの規格，はめ込み寸法</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- REFERENCES -->
+        <section class="reference-section">
+            <h3 style="font-size:1.2rem; margin-bottom:2rem; font-weight:600; letter-spacing:0.05em;">REFERENCES / 参考文献</h3>
+            <ul class="reference-list">
+                <li>日本工業規格，JIS B 1301-1996 ，「キー及びキー溝」</li>
+                <li>日本工業規格，JIS B 1451-1991 ，「フランジ形固定軸継手」</li>
+                <li>m-sudo‘s Room， S-N曲線：S45C，S10C</li>
+                <li>機械設計Map，機械設計の強度計算における安全率</li>
+                <li>キーみぞを有する軸の応力集中について</li>
+                <li>機械設計学講義資料</li>
+            </ul>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 フランジシャフト 設計レポート. All Rights Reserved. </p>
+    </footer>
+
+    <div id="imageModal" onclick="closeModal()" style="display: none; position: fixed; z-index: 9999; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.98); backdrop-filter: blur(10px); align-items: center; justify-content: center; cursor: zoom-out;">
+        <img id="modalImg" style="max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s ease;">
+        <div style="position: absolute; top: 20px; right: 30px; color: #ffffff; font-size: 30px; font-family: sans-serif; cursor: pointer;">&times;</div>
+    </div>
+
+    <script>
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modal.style.display = 'flex';
+            modalImg.src = src;
+            // 少し遅らせてアニメーション（ふわっと拡大）させる
+            setTimeout(() => {
+                modalImg.style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 200);
+        }
+
+        // Escキーでも閉じられるようにする（UX向上）
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</body>
+</html>
